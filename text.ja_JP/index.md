@@ -12,8 +12,8 @@
 <div class="columns2">
 
 
-1. [はじめに](chapter1.html)
-2. [開発環境の準備](chapter2.html)
+1. [序論](chapter1.html)
+2. [はじめに](chapter2.html)
 3. [関数とレコード](chapter3.html)
 4. [再帰、マップ、畳み込み](chapter4.html) (未更新)
 5. [パターン照合](chapter5.html) (未更新)
