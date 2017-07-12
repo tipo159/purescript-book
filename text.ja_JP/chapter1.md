@@ -1,50 +1,52 @@
 # はじめに
 
-## 関数型JavaScript
+## 関数型Javascript
 
 関数型プログラミングの手法は、かねてよりJavaScriptでも用いられてきました。
 
-- [UnderscoreJS](http://underscorejs.org)などのライブラリは、`map`や` filter`、`reduce`といったよく知られた関数を活用して、小さいプログラムを組み合わせて大きなプログラムを作れるようにします。
+- [UnderscoreJS](http://underscorejs.org) などのライブラリは、`map`や`filter`、`reduce`といったよく知られた関数を活用して、小さいプログラムを組み合わせて大きなプログラムを作れるようにします。
 
-```javascript
-var sumOfPrimes = 
-    _.chain(_.range(1000))
-     .filter(isPrime)
-     .reduce(function(x, y) { 
-         return x + y; 
-     })
-     .value();
-```
+    ```javascript
+    var sumOfPrimes =
+        _.chain(_.range(1000))
+         .filter(isPrime)
+         .reduce(function(x, y) {
+             return x + y;
+         })
+         .value();
+     ```
 
--  NodeJSにおける非同期プログラミングでは、コールバックを定義するために第一級の値としての関数に大きく依存しています。
+- NodeJSにおける非同期プログラミングでは、コールバックを定義するために第一級の値としての関数に大きく依存しています。
 
-```javascript
-require('fs').readFile(sourceFile, function (error, data) {
-  if (!error) {
-    require('fs').writeFile(destFile, data, function (error) {
+    ```javascript
+    require('fs').readFile(sourceFile, function (error, data) {
       if (!error) {
-        console.log("File copied");
+        require('fs').writeFile(destFile, data, function (error) {
+          if (!error) {
+            console.log("File copied");
+          }
+        });
       }
     });
-  }
-});
-```
+    ```
+
+- [React](http://facebook.github.io/react/) や [virtual-dom](https://github.com/Matt-Esch/virtual-dom) などのライブラリは、ビューをアプリケーションステートの純粋関数としてモデル化しています。
 
 関数は単純な抽象化を可能にし、優れた生産性をもたらしてくれます。しかし、JavaScriptでの関数型プログラミングには欠点があります。JavaScriptは冗長で、型付けされず、強力な抽象化を欠いているのです。また、奔放に書かれたJavaScriptコードは、式の理解をとても難しくします。
 
 PureScriptはこのような問題を解決すべく作られたプログラミング言語です。PureScriptは、とても表現力豊かでありながらわかりやすく読みやすいコードを書けるようにする、軽量な構文を備えています。強力な抽象化を提供する豊かな型システムも使用しています。また、JavaScriptやJavaScriptへとコンパイルされる他の言語と相互運用するときに重要な、高速で理解しやすいコードを生成します。一言で言えば、PureScriptは純粋関数型プログラミングの理論的な強力さと、JavaScriptのお手軽で緩いプログラミングスタイルとの、とても現実的なバランスを狙っているということを理解して頂けたらと思います。
-    
+
 ## 型と型推論
 
-動的型付けの言語と静的型付けの言語をめぐる議論についてはよく知られています。PureScriptは**静的型付け**の言語、つまり正しいプログラムはコンパイラによってその動作を示すような**型**を与えられる言語です。逆にいえば、型を​​与えることができないプログラムは**誤ったプログラム**であり、コンパイラによって拒否されます。動的型付けの言語とは異なり、PureScriptでは型は**コンパイル時**のみに存在し、実行時には型の表現はありません。
+動的型付けの言語と静的型付けの言語をめぐる議論についてはよく知られています。PureScriptは**静的型付け**の言語、つまり正しいプログラムはコンパイラによってその動作を示すような**型**を与えられる言語です。逆にいえば、型を​​与えることができないプログラムは **誤ったプログラム**であり、コンパイラによって拒否されます。動的型付けの言語とは異なり、PureScriptでは型は**コンパイル時**のみに存在し、実行時には型の表現はありません。
 
 PureScriptの型は、これまでJavaやC#のような他の言語で見たような型とは、いろいろな意味で異なっていることにも注意することが大切です。おおまかに言えばPureScriptの型はJavaやC#と同じ目的を持っているものの、PureScriptの型はMLとHaskellのような言語に影響を受けています。開発者がプログラムについての強い主張を表明できるので、PureScriptの型は表現力豊かなのです。最も重要なのは、PureScriptの型システムは**型推論**(type inference)をサポートしていることです。型推論は最低限の明示的な型注釈だけを必要とし、型システムを厄介者ではなく**道具**にしてくれます。簡単な例を示すと、次のコードは**数**を定義していますが、それが `Number`型だという注釈はコードのどこにもありません。
 
 ```haskell
-iAmANumber = 
+iAmANumber =
   let square x = x * x
-  in square 42
-``` 
+  in square 42.0
+```
 
 次のもっと複雑な例では、**コンパイラにとって未知**の型が存在しているときでさえも、型注釈なしで型の正しさを確かめることができるということが示されています。
 
@@ -71,15 +73,17 @@ PureScriptのような関数型言語はアプリケーション開発の最初�
 
 - 中核となる処理はPureScriptで記述し、ユーザーインターフェースはJavaScriptで記述する
 - JavaScriptや、他のJavaScriptにコンパイルされる言語でアプリケーションを書き、PureScriptでそのテストを書く
--  既存のアプリケーションのユーザインタフェースのテストを自動化するためにPureScriptを使用する
+- 既存のアプリケーションのユーザインタフェースのテストを自動化するためにPureScriptを使用する
 
 この本では、小規模な課題をPureScriptで解決することに焦点を当てます。この解決策は大規模なアプリケーションに統合することもできますが、JavaScriptからPureScriptコードを呼び出す方法、およびその逆についても見ていきます。
 
 ## ソフトウェア要件
 
-この本でのソフトウェア要件は最小限です。第１章では開発環境のセットアップを一から案内します。これから使用するツールは、ほとんどの現代のオペレーティングシステムの標準リポジトリで使用できるものです。
+この本でのソフトウェア要件は最小限です。最初の章では開発環境のセットアップを一から案内します。これから使用するツールは、ほとんどの現代のオペレーティングシステムの標準リポジトリで使用できるものです。
 
 PureScriptコンパイラ自体は最新のHaskell Platformが稼働しているシステムならソースからビルドすることができますが、次の章ではこの手順を説明していきます。
+
+このバージョンの本書に含まれるコードはバージョン`0.10.*`のPureScriptコンパイラと互換性があります。
 
 ## 読者について
 
@@ -93,25 +97,27 @@ PureScriptはプログラミング言語Haskellに強く影響を受けている
 
 本書の各章は、概ね章ごとに完結しています。しかしながら、多少の関数型プログラミングの経験がある初心者でも、まずは各章を順番に進めていくことをおすすめします。最初の数章では、本書の後半の内容を理解するために必要な基礎知識を養います。関数型プログラミングの考え方に十分通じた読者(特にMLやHaskellのよう強く型付けされた言語での経験を持つ読者)なら、本書の前半のほうの章を読まなくても後半の章のコードの大まかな理解を得ることがおそらく可能でしょう。
 
-各章ではそれぞれひとつの実用的な例に焦点をあて、新しい考え方を導入するための動機付けとして用います。各章のコードは本書の[GitHubのリポジトリ](https://github.com/paf31/purescript-book)から入手できます。各章にはソースコードから抜粋したコード片が掲載されていますが、完全に理解するためには本書に掲載されたコードと平行してリポジトリのソースコードを読む必要があります。対話式環境 `psci`で実行し理解を確かめられるように、長めの節には短いコード片が含まれます。
+各章ではそれぞれひとつの実用的な例に焦点をあて、新しい考え方を導入するための動機付けとして用います。各章のコードは本書の[GitHubのリポジトリ](https://github.com/paf31/purescript-book)から入手できます。各章にはソースコードから抜粋したコード片が掲載されていますが、完全に理解するためには本書に掲載されたコードと平行してリポジトリのソースコードを読む必要があります。対話式環境 PSCiで実行し理解を確かめられるように、長めの節には短いコード片が含まれます。
 
 コード例は次のように等幅フォントで示されています。
 
 ```haskell
 module Example where
 
-main = Debug.Trace.trace "Hello, World!"
+import Control.Monad.Eff.Console (log)
+
+main = log "Hello, World!"
 ```
 
 先頭にドル記号がついた行は、コマンドラインに入力されたコマンドです。
 
 ```text
-$ psc src/Main.purs
+$ pulp build
 ```
 
 通常はこれらのコマンドはLinux / Mac OSの利用者には適合しますが、Windowsの利用者はファイル区切り文字を変更する、シェルの組み込み機能をWindowsの相当するものに置き換えるなどの小さな変更を加える必要があるかもしれません。
 
-`psci` 対話式プロンプトに入力するコマンドは、行の先頭に山括弧が付けられています。
+PSCi 対話式プロンプトに入力するコマンドは、行の先頭に山括弧が付けられています。
 
 ```text
 > 1 + 2
@@ -126,12 +132,13 @@ $ psc src/Main.purs
 
 もしどこかでつまづいたときには、PureScriptを学ぶためのオンラインで利用可能な資料がたくさんあります。
 
--  PureScript IRCチャン​​ネルはあなたが抱える問題についてチャットするのに最適な場所です。IRCクライアントでirc.freenode.netをポイントし、#purescriptチャンネルに接続してください。
--  [PureScriptのウェブサイト](http://purescript.org)にはPureScriptの開発者によって書かれたブログ記事や、初心者向けの動画、その他のリソースへのリンクがあります。
--  [PureScriptコンパイラのドキュメント](http://docs.purescript.org)は、言語の主要な機能についての簡単​​なコード例があります。
--  [Try PureScript!](http://try.purescript.org) ではユーザーがWebブラウザでPureScriptコードをコンパイルすることができます。また、ウェブサイトにはコードの簡単な例がいくつか含まれています。
+- PureScript IRCチャン​​ネルはあなたが抱える問題についてチャットするのに最適な場所です。IRCクライアントでirc.freenode.netをポイントし、#purescriptチャンネルに接続してください。
+- [PureScriptのウェブサイト](http://purescript.org) にはPureScriptの開発者によって書かれたブログ記事や、初心者向けの動画、その他のリソースへのリンクがあります。
+- [PureScriptのwiki](http://wiki.purescript.org) には、PureScriptの開発者やユーザによって書かれた幅広い話題についての記事やサンプルがあります。
+- [Try PureScript!](http://try.purescript.org) ではユーザーがWebブラウザでPureScriptコードをコンパイルすることができます。また、ウェブサイトにはコードの簡単な例がいくつか含まれています。
+- [Pursuit](http://pursuit.purescript.org) はPureScriptの型や関数の検索可能なデータベースです。
 
-もしあなたが例を読んで学ぶことを好むなら、GitHubの `purescript`と` purescript-contrib` organisation にはPureScriptコードの例がたくさんあります。
+もしあなたが例を読んで学ぶことを好むなら、GitHubの `purescript`, `purescript-node`と`purescript-contrib`にはPureScriptコードの例がたくさんあります。
 
 ## 著者について
 
@@ -141,14 +148,12 @@ $ psc src/Main.purs
 
 JavaScriptでの経験をもとに、私はPureScriptコンパイラの開発を始めることにしました。私がHaskellのような言語から取り上げた関数型プログラミングの手法を使っていることを私自ら発見しましたが、それを応用するためのもっと理にかなった環境を求めていました。そのときの解決策にはHaskellをその意味論を維持しながらJavaScriptへとコンパイルするいろいろな試み(Fay、Haste、GHCJS)が含まれていましたが、私が興味を持っていたのは、この問題への別の切り口からのアプローチ、すなわちHaskellのような言語の構文と型システムを楽しみながらJavaScriptの意味論も維持するということが、どのようにすれば可能になるのかでした。
 
-私は[ウェブサイト](http://functorial.com)を運営しており、[Twitterで連絡をとる](http://twitter.com/paf31)こともできます。
+私は[ブログ](http://blog.functorial.com) を運営しており、[Twitterで連絡をとる](http://twitter.com/paf31) こともできます。
 
 ## 謝辞
 
 現在の状態に到達するまでPureScriptを手伝ってくれた多くの協力者に感謝したいと思います。コンパイラやツール、ライブラリ、ドキュメント、テストでの組織的で弛まぬ努力がなかったら、プロジェクトは間違いなく失敗していたことでしょう。
 
-この本の表紙に表示されたPureScriptのロゴはGareth Hughesによって作成されたもので、[Creative Commons Attribution 4.0 license](https://creativecommons.org/licenses/by/4.0/)の条件の下で再利用させて頂いています 。
+この本の表紙に表示されたPureScriptのロゴはGareth Hughesによって作成されたもので、[Creative Commons Attribution 4.0 license](https://creativecommons.org/licenses/by/4.0/) の条件の下で再利用させて頂いています 。
 
 最後に、この本の内容に関する反応や訂正をくださったすべての方に、心より感謝したいと思います。
-
-
