@@ -54,4 +54,4 @@ This book is licensed under the [Creative Commons Attribution-NonCommercial-Shar
 
 ----
 
-Japanese translation by Hiruberuto　and tipo159
+Japanese translation by Hiruberuto and tipo159
